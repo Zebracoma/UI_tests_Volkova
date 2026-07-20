@@ -21,8 +21,7 @@ public class CatalogPage {
     private final SelenideElement checkboxMoscow = $x("//*[text()='г. Москва']");
     private final SelenideElement buttonSubmitRegion = $x("//span[text()='Применить']");
 
-    private final ElementsCollection productNames = $$("a[itemprop='name']");
-    private final ElementsCollection productPrices = $$("[itemprop='price']");
+    private final ElementsCollection productCards = $$("div[itemtype='http://schema.org/Product']");
 
     private final SelenideElement pageTwoButton = $x("//a[text()='2']");
 
@@ -70,13 +69,20 @@ public class CatalogPage {
     public List<String> collectProductsData() {
         List<String> parsedProducts = new ArrayList<>();
 
-        productNames.shouldHave(CollectionCondition.sizeGreaterThan(0));
+        productCards.shouldHave(CollectionCondition.sizeGreaterThan(0));
 
-        for (int i = 0; i < productNames.size(); i++) {
-            String name = productNames.get(i).getText();
-            String rawPrice = productPrices.get(i).getText();
+        int count = productCards.size();
+        for (int i = 0; i < count; i++) {
+            SelenideElement card = productCards.get(i);
+
+            String name = card.$("a[itemprop='name']").getText();
+            String rawPrice = card.$("[itemprop='price']").getText();
 
             String cleanPrice = rawPrice.replaceAll("[^0-9,]", "");
+
+            if (cleanPrice.isEmpty()) {
+                continue;
+            }
 
             parsedProducts.add(name + ", " + cleanPrice + " Руб/Штука");
         }

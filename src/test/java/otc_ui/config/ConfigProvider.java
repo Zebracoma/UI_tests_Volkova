@@ -2,6 +2,8 @@ package otc_ui.config;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 public class ConfigProvider {
@@ -12,7 +14,7 @@ public class ConfigProvider {
             if (inputStream == null) {
                 throw new RuntimeException("Файл application.properties не найден в resources");
             }
-            properties.load(inputStream);
+            properties.load(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new RuntimeException("Ошибка при чтении файла конфигурации", e);
         }
